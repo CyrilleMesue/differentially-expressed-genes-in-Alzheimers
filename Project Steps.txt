@@ -1,0 +1,137 @@
+Step 1: Data Download and Exploration
+Download Data Processed Data:
+- Access the processed RNA-seq data from GEO with ID GSE53697 [here](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE53697).
+
+Download Metadata:
+- Download the series matrix file for metadata.
+
+Download Raw Data:
+For Raw Data: Use the SRA Toolkit to download the raw sequencing data from the SRA database. 
+fastq-dump --split-files SRA_accession_number
+SRR2422918
+SRR2422919	
+SRR2422920
+SRR2422921
+SRR2422922	
+SRR2422923
+SRR2422924
+SRR2422925
+SRR2422926	
+SRR2422927
+SRR2422928	
+SRR2422929
+SRR2422930
+SRR2422931
+SRR2422932
+SRR2422933
+SRR2422934	
+as310b/j2238b
+https://ftp.ncbi.nlm.nih.gov/geo/series/GSE53nnn/GSE53697/matrix/GSE53697_series_matrix.txt.gz
+https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE53697&format=file&file=GSE53697%5FRNAseq%5FAD%2Etxt%2Egz
+
+Commands:
+chmod +x download_data.sh
+./download_data.sh
+
+
+
+
+
+Step 2: Upstream Analysis
+- This is to process raw data
+1. Quality Control:
+Assess the quality of raw reads using tools like FastQC.
+```bash
+fastqc your_file.fastq
+```
+
+2. Trimming and Filtering:
+- If needed, perform trimming and filtering of low-quality bases using tools like Trimmomatic or Cutadapt.
+```bash
+trimmomatic SE -phred33 input.fastq output.fastq LEADING:3 TRAILING:3 SLIDINGWINDOW:4:15 MINLEN:36
+```
+
+3. Sequence Alignment and Quantification
+
+3.1. Align Reads:
+- Use an alignment tool such as HISAT2 or STAR to align the trimmed reads to the reference genome.
+```bash
+hisat2 -x genome_index -U input.fastq -S output.sam
+```
+
+3.2. Convert to BAM:
+- Convert the SAM file to BAM format using tools like Samtools.
+```bash
+samtools view -bS input.sam > output.bam
+```
+
+3.3. Quantify Gene Expression:
+- Use tools like featureCounts or HTSeq to quantify gene expression.
+```bash
+featureCounts -a annotation.gtf -o counts.txt input.bam
+```
+
+Step 3: Downstream Analysis
+Here we can use either the downloaded processed data or the results from downstream analysis.
+
+1. Data Exploration and Preprocessing
+Explore Metadata:
+- Review the metadata to understand sample characteristics, experimental conditions, and any other relevant information.
+
+Load Data:
+- Import the RNA-seq data into your preferred analysis environment (e.g., Python with pandas, R).
+
+Data Cleaning:
+- Check for missing values and handle them appropriately.
+- Ensure data integrity and consistency.
+
+Data Transformation:
+- If necessary, transform the data (e.g., log transformation) to meet assumptions of downstream analyses.
+
+2. Exploratory Data Analysis (EDA)
+PCA Analysis:
+- Use Principal Component Analysis (PCA) to explore the overall structure of the data.
+- Visualize PCA results to observe any clustering or separation between control and advanced AD samples.
+
+3. Differential Gene Expression Analysis
+Differential Expression Analysis:
+- Perform differential gene expression analysis to identify genes significantly different between control and advanced AD samples.
+- Utilize tools such as DESeq2, edgeR, or limma.
+
+Visualization:
+Create volcano plots or heatmaps to visualize the differentially expressed genes.
+
+4. Pathway Analysis
+Gene Enrichment Analysis:
+- Conduct gene enrichment analysis to identify pathways associated with differentially expressed genes.
+- Use tools like DAVID, Enrichr, or clusterProfiler.
+
+GSEA Analysis:
+- Perform Gene Set Enrichment Analysis (GSEA) to further validate pathway enrichment findings.
+
+5. Interpretation and Reporting
+
+Interpret Results:
+- Summarize key findings and interpret the biological significance of identified pathways.
+
+Visualization:
+- Create visualizations (e.g., pathway diagrams) to enhance the understanding of altered pathways in advanced AD.
+
+Documentation:
+- Document the analysis workflow, parameters used, and any assumptions made.
+
+6. Additional Analyses (if needed)
+
+Subgroup Analysis:
+- Explore potential subgroup differences within the advanced AD samples.
+
+Integration with External Data:
+- Integrate findings with relevant external datasets for validation.
+
+7. Conclusion and Discussion
+Conclusion:
+- Summarize the project's main findings and their implications.
+
+Discussion:
+- Discuss limitations, future directions, and any recommendations for further research.
+
