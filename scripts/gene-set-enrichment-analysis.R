@@ -5,6 +5,7 @@ library(enrichplot)
 organism = "org.Hs.eg.db"
 library(organism, character.only = TRUE)
 library(pathview)
+library('cowplot')
 
 
 # set working directory
@@ -16,7 +17,6 @@ setwd(dirname(dirname(rstudioapi::getActiveDocumentContext()$path)))
 
 # reading in data from deseq2
 df = read.csv("output_files/DGE/Deseq2-results-all.tsv", header=TRUE, sep = "\t")
-# df <- df[0:100,]
 
 # we want the log2 fold change 
 original_gene_list <- df$log2FoldChange
@@ -54,36 +54,54 @@ gse <- gseGO(geneList=gene_list,
 require(DOSE)
 
 # Dot plot of enriched terms
-dotplot(gse, showCategory=30, split=".sign", font.size =7, label_format = 50)
+dotplot1 <- dotplot(gse, showCategory=20, split=".sign", font.size =7, color = "p.adjust",label_format = 100)
+ggsave(filename = "output_files/GSEA/gseGO-dotplot-enriched-terms.png", plot = dotplot1 , bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/GSEA/gseGO-dotplot-enriched-terms.pdf", plot = dotplot1 , device = "pdf", width = 8, height = 6)
 
 # Dot Plot of activated & Suppressed GO terms
-dotplot(gse, showCategory=30, split=".sign", font.size =7, label_format = 50) + facet_grid(.~.sign)
+dotplot2 <- dotplot(gse, showCategory=20, split=".sign", font.size =7, label_format = 100) + facet_grid(.~.sign)
+ggsave(filename = "output_files/GSEA/gseGO-dotplot-activated-suppressed-go-terms.png", plot = dotplot2 , bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/GSEA/gseGO-dotplot-activated-suppressed-go-terms.pdf", plot = dotplot2 , device = "pdf", width = 8, height = 6)
 
 # Gene-Concept Network plot of enriched terms
-cnetplot(gse, categorySize="pvalue", foldChange=gene_list, font.size =7)
+cnetplot1 <- cnetplot(gse, categorySize="pvalue", foldChange=gene_list, font.size =7)
+ggsave(filename = "output_files/GSEA/gseGO-cnetplot-enriched-terms.png", plot = cnetplot1 , bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/GSEA/gseGO-cnetplot-enriched-terms.pdf", plot = cnetplot1 , device = "pdf", width = 8, height = 6)
 
 # Gene-Concept Network plot of enriched terms Circular
-cnetplot(gse, foldChange=gene_list, circular = TRUE, colorEdge = TRUE, font.size =5) +opts(legend.position="bottom")
+cnetplot2 <- cnetplot(gse, foldChange=gene_list, circular = TRUE, colorEdge = TRUE, font.size =5)
+ggsave(filename = "output_files/GSEA/gseGO-cnetplot-enriched-terms-circular.png", plot = cnetplot2 , bg = "white",device = "png", width = 16, height = 8)
+ggsave(filename = "output_files/GSEA/gseGO-cnetplot-enriched-terms-circular.pdf", plot = cnetplot2 , device = "pdf", width = 16, height = 8)
 
 # Heatmap plot of enriched terms. default (A), foldChange=geneList (B) 
-p1 <- heatplot(gse, showCategory=5)
-p2 <- heatplot(gse, foldChange=gene_list, showCategory=5)
-cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+p1 <- heatplot(gse, showCategory=5, label_format = 50)
+p2 <- heatplot(gse, foldChange=gene_list, showCategory=5, label_format = 50)
+heatplot1 <- cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+ggsave(filename = "output_files/GSEA/gseGO-heatplot-enriched-terms.png", plot = heatplot1, bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/GSEA/gseGO-heatplot-enriched-terms.pdf", plot = heatplot1 , device = "pdf", width = 8, height = 6)
 
 # Enrichment Map
 x2 <- pairwise_termsim(gse)
-emapplot(x2, showCategory = 20)
+emapplot1 <- emapplot(x2, showCategory = 20)
+ggsave(filename = "output_files/GSEA/gseGO-enrichment-map.png", plot = emapplot1 , bg = "white",device = "png", width = 14, height = 8)
+ggsave(filename = "output_files/GSEA/gseGO-enrichment-map.pdf", plot = emapplot1 , device = "pdf", width = 14, height = 8)
 
 # Ridgeplot for gene set enrichment analysis.
-ridgeplot(gse, label_format = 50, showCategory =20) + labs(x = "enrichment distribution")
+ridgeplot1 <- ridgeplot(gse, label_format = 100, showCategory =20) + labs(x = "enrichment distribution")
+ggsave(filename = "output_files/GSEA/gseGO-ridgeplot-gsea.png", plot = ridgeplot1 , bg = "white",device = "png", width = 14, height = 8)
+ggsave(filename = "output_files/GSEA/gseGO-ridgeplot-gsea.pdf", plot = ridgeplot1 , device = "pdf", width = 14, height = 8)
 
 # gseaplot for GSEA result(by = "runningScore"). by = "runningScore" (A), by = "preranked" (B), default (C) 
-gseaplot(gse, by = "all", title = gse$Description[1], geneSetID = 1)
+gseaplot1 <- gseaplot(gse, by = "all", title = gse$Description[1], geneSetID = 1)
+ggsave(filename = "output_files/GSEA/gseGO-gseaplot-firstpathway.png", plot = gseaplot1 , bg = "white",device = "png", width = 16, height = 8)
+ggsave(filename = "output_files/GSEA/gseGO-gseaplot-firstpathway.pdf", plot = gseaplot1 , device = "pdf", width = 14, height = 8)
 
 # Pmcplot of enrichment analysis (pubmed trend of enriched terms)
-terms <- gse$Description[1:3]
-terms <- gsub("(.{30})", "\\1\n", terms)  
-pmcplot(terms, 2010:2023, proportion=FALSE)
+terms <- gse$Description[1:5]
+terms <- gsub("(.{50})", "\\1\n", terms)  
+pmcplot1 <- pmcplot(terms, 2010:2023)
+ggsave(filename = "output_files/GSEA/gseGO-pubmed-trend-of-enriched-terms-number_and_proportion.png", plot = pmcplot1 , bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/GSEA/gseGO-pubmed-trend-of-enriched-terms-number_and_proportion.pdf", plot = pmcplot1 , device = "pdf", width = 8, height = 6)
 
 ################################################################################
 # KEGG Gene Set Enrichment Analysis
@@ -122,40 +140,71 @@ kk2 <- gseKEGG(geneList     = kegg_gene_list,
                keyType       = "ncbi-geneid")
 
 # Dot plot of enriched terms kegg
-dotplot(kk2, showCategory=20, split=".sign", font.size =7, label_format = 50)
+dotplot1 <- dotplot(kk2, showCategory=20, split=".sign", font.size =7, label_format = 100)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-dotplot-enriched-terms.png", plot = dotplot1 , bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-dotplot-enriched-terms.pdf", plot = dotplot1 , device = "pdf", width = 8, height = 6)
 
 # Dot Plot of activated & Suppressed GO terms kegg
-dotplot(kk2, showCategory=20, split=".sign", font.size =7, label_format = 50) + facet_grid(.~.sign)
+dotplot2 <- dotplot(kk2, showCategory=20, split=".sign", font.size =7, label_format = 100) + facet_grid(.~.sign)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-dotplot-activated-suppressed-go-terms.png", plot = dotplot2 , bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-dotplot-activated-suppressed-go-terms.pdf", plot = dotplot2 , device = "pdf", width = 8, height = 6)
 
 # Gene-Concept Network plot of enriched terms kegg
-cnetplot(kk2, categorySize="pvalue", foldChange=gene_list, font.size =7)
+cnetplot1 <- cnetplot(kk2, categorySize="pvalue", foldChange=gene_list, font.size =7)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-cnetplot-enriched-terms.png", plot = cnetplot1 , bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-cnetplot-enriched-terms.pdf", plot = cnetplot1 , device = "pdf", width = 8, height = 6)
 
 # Gene-Concept Network plot of enriched terms Circular kegg
-cnetplot(kk2, foldChange=gene_list, circular = TRUE, colorEdge = TRUE, font.size =5, showCategory=3)
+cnetplot2 <- cnetplot(kk2, foldChange=gene_list, circular = TRUE, colorEdge = TRUE, font.size =5, showCategory=3)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-cnetplot-enriched-terms-circular.png", plot = cnetplot2 , bg = "white",device = "png", width = 12, height = 6)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-cnetplot-enriched-terms-circular.pdf", plot = cnetplot2 , device = "pdf", width = 12, height = 6)
 
 # Heatmap plot of enriched terms. default (A), foldChange=geneList (B) kegg
-p1 <- heatplot(kk2, showCategory=3)
-p2 <- heatplot(kk2, foldChange=gene_list, showCategory=3)
-cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+p1 <- heatplot(kk2, showCategory=3, label_format = 50)
+p2 <- heatplot(kk2, foldChange=gene_list, showCategory=3, label_format = 50)
+heatplot1 <- cowplot::plot_grid(p1, p2, ncol=1, labels=LETTERS[1:2])
+heatplot1
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-heatplot-enriched-terms.png", plot = heatplot1, bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-heatplot-enriched-terms.pdf", plot = heatplot1 , device = "pdf", width = 8, height = 6)
 
 # Enrichment Map kegg
 x2 <- pairwise_termsim(kk2)
-emapplot(x2, showCategory = 20)
+emapplot <- emapplot(x2, showCategory = 20)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-enrichment-map.png", plot = emapplot1 , bg = "white",device = "png", width = 14, height = 8)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-enrichment-map.pdf", plot = emapplot1 , device = "pdf", width = 14, height = 8)
 
 # Ridgeplot for gene set enrichment analysis. kegg
-ridgeplot(kk2, label_format = 50, showCategory =20) + labs(x = "enrichment distribution")
+ridgeplot1 <- ridgeplot(kk2, label_format = 50, showCategory =20) + labs(x = "enrichment distribution")
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-ridgeplot-gsea.png", plot = ridgeplot1 , bg = "white",device = "png", width = 14, height = 8)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-ridgeplot-gsea.pdf", plot = ridgeplot1 , device = "pdf", width = 14, height = 8)
 
 # gseaplot for GSEA result(by = "runningScore"). by = "runningScore" (A), by = "preranked" (B), default (C) kegg
-gseaplot(kk2, by = "all", title = gse$Description[1], geneSetID = 1)
+gseaplot1 <- gseaplot(kk2, by = "all", title = gse$Description[1], geneSetID = 1)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-gseaplot-firstpathway.png", plot = gseaplot1 , bg = "white",device = "png", width = 16, height = 8)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-gseaplot-firstpathway.pdf", plot = gseaplot1 , device = "pdf", width = 14, height = 8)
 
 # Pmcplot of enrichment analysis (pubmed trend of enriched terms)
-terms <- kk2$Description[1:3]
+terms <- kk2$Description[1:5]
 terms <- gsub("(.{25})", "\\1\n", terms)  
-pmcplot(terms, 2010:2023, proportion=FALSE)
+pmcplot1 <- pmcplot(terms, 2010:2023)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-pubmed-trend-of-enriched-terms-number_and_proportion.png", plot = pmcplot1 , bg = "white",device = "png", width = 8, height = 6)
+ggsave(filename = "output_files/KEGG_GSEA/gseKEGG-pubmed-trend-of-enriched-terms-number_and_proportion.pdf", plot = pmcplot1 , device = "pdf", width = 8, height = 6)
 
 # Produce the native KEGG plot (PNG)
-dme <- pathview(gene.data=kegg_gene_list, pathway.id="hsa05168", species = kegg_organism)
+dme <- pathview(gene.data=kegg_gene_list, pathway.id="hsa05168", 
+                species = kegg_organism,
+                kegg.dir = "output_files/KEGG_GSEA/"
+                )
 
 # Produce a different plot (PDF) (not displayed here)
-dme <- pathview(gene.data=kegg_gene_list, pathway.id="hsa05168", species = kegg_organism, kegg.native = F)
+dme <- pathview(gene.data=kegg_gene_list, pathway.id="hsa05168", 
+                species = kegg_organism, kegg.native = F,
+                kegg.dir = "output_files/KEGG_GSEA/"
+                )
+
+
+# save gse and kegggse analysis results
+save(gse, file = "data/gsea.Rdata")
+save(kk2, file = "data/kegg-gsea.Rdata")
+
 
