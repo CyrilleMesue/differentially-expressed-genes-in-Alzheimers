@@ -1,17 +1,20 @@
 STARTER PACKAGE
-- Exploratory Data Analysis of Processed Data (Python and R)
-- Statistical Anlysis
-- Differential Analysis
-- data normalization
-- Data Visualization
+- Library Normalization
+- Exploratory Data Analysis (Python and R)
+- Differential Gene Expression Analysis
+- Gene Set Enrichment Analysis (GSEA)
+- Data Visualization: Volcano Plot, Heatmap (2), MA Plot, PCA, count plot, Dispersion Plot, histogram of p-values, 
+- GO terms Plots, Pathway Analysis Plots
 
 STANDARD PACKAGE
-- Exploratory Data Analysis of Processed Data (Python and R)
-- Statistical Anlysis
-- Differential Analysis
-- data normalization
-- Data Visualization
-- Result Documentation and Interpretion
+- Library Normalization
+- Exploratory Data Analysis (Python and R)
+- Differential Gene Expression Analysis
+- Gene Set Enrichment Analysis (GSEA)
+- Data Visualization: Volcano Plot, Heatmap (2), MA Plot, PCA, count plot, Dispersion Plot, histogram of p-values, 
+- GO terms Plots, Pathway Analysis Plots
+- Shiny App Dashboard
+- Analysis Report
 
 PREMIUM PACKAGE
 - Quality control and preprocessing of raw sequencing data
@@ -22,5 +25,7 @@ PREMIUM PACKAGE
 - Gene Set Enrichment Analysis (GSEA)
 - Data Visualization: Volcano Plot, Heatmap (2), MA Plot, PCA, count plot, Dispersion Plot, histogram of p-values, 
 - GO terms Plots, Pathway Analysis Plots
+- Shiny App Dashboard
+- Analysis Report
 
 

@@ -22,6 +22,10 @@ rpkm_count_df = rpkm_count_df.dropna().reset_index(drop = True)
 raw_count_df = raw_count_df.loc[:, (raw_count_df != 0).any(axis=0)]
 rpkm_count_df = rpkm_count_df.loc[:, (rpkm_count_df != 0).any(axis=0)]
 
+# Remove genes with negative values
+raw_count_df = raw_count_df.loc[(raw_count_df.iloc[:,1:] >= 0).all(axis=1), :]
+rpkm_count_df = rpkm_count_df.loc[(rpkm_count_df.iloc[:,1:] >= 0).all(axis=1), :]
+
 # Remove genes with very low summation
 threshold_raw = 5
 threshold_rpkm = 1
