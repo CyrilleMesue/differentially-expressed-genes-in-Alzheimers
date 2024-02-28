@@ -28,8 +28,8 @@ To reproduce the analysis, follow these steps:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/CyrilleMesue/RNA-Seq-Pipeline-Starter.git
-   cd RNA-Seq-Pipeline-Starter
+   git clone https://github.com/CyrilleMesue/differentially-expressed-genes-in-Alzheimers.git
+   cd differentially-expressed-genes-in-Alzheimers
    ```
 
 2. **Install dependencies:**
